@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: dbUser # Replace dbUser with your desired username
+      POSTGRES_PASSWORD: dbPassword # Replace dbPassword with your desired password
+      POSTGRES_DB: dbName # Replace dbName with your desired database name
+    ports:
+      - "5432:5432" # Maps port 5432 of the container to port 5432 on the host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persists data across container restarts
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
