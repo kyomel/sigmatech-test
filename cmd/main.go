@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sigmatech-test/pkg/controller"
 	databases "sigmatech-test/pkg/db"
+	"sigmatech-test/pkg/repository"
+	"sigmatech-test/pkg/usecase"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -39,7 +43,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(db)
+	userRepo := repository.NewUserRepository(db)
+	userUseCase := usecase.NewUserUseCase(10*time.Second, userRepo, db)
+	userController := controller.NewUserController(userUseCase)
+
+	e.POST("/register", userController.RegisterUser)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", portConnect)))
 }
