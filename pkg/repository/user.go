@@ -18,6 +18,7 @@ type UserRepository interface {
 	RegisterUser(ctx context.Context, req *model.RegisterUser) (*model.RegisterUserID, error)
 	AddConsumer(ctx context.Context, req *model.RegisterUser, id int) error
 	GetUserByEmail(ctx context.Context, email string) (bool, error)
+	FindUserByEmail(ctx context.Context, email string) (*model.UserLogin, error)
 }
 
 func NewUserRepository(db *sqlx.DB) UserRepository {
@@ -105,4 +106,23 @@ func (u *userRepo) GetUserByEmail(ctx context.Context, email string) (bool, erro
 	}
 
 	return result, nil
+}
+
+func (u *userRepo) FindUserByEmail(ctx context.Context, email string) (*model.UserLogin, error) {
+	var result model.UserLogin
+
+	query := `
+		SELECT email, password
+		FROM users
+		WHERE email = $1
+	`
+
+	row := u.db.QueryRowContext(ctx, query, email)
+	err := row.Scan(&result.Email, &result.Password)
+	if err != nil {
+		log.Println("SQL error on FindUserByEmail => Execute Query and Scan", err)
+		return nil, err
+	}
+
+	return &result, nil
 }

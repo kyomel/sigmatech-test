@@ -48,6 +48,7 @@ func main() {
 	userController := controller.NewUserController(userUseCase)
 
 	e.POST("/register", userController.RegisterUser)
+	e.POST("/login", userController.Login)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", portConnect)))
 }
